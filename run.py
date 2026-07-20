@@ -71,7 +71,7 @@ def load_model_and_tokenizer_from_checkpoint():
 from datasets import load_dataset, Dataset
 from Bio import SeqIO
 
-species_list = ["Human", "RhesusMacaque", "Rat", "FruitFly", "Celegans", "Dog", "Chicken", "HoneyBee", "Zebrafish", "Arabidopsis", "Barleycorn", "BakerYeast"]
+species_list = ["Human"]
 fasta_paths = {
     "Human": {"train": "/datasets/multi_promoters/H_sapiens_Human_promoters/H_sapiens_Human_promoters_train.fna", "test": "/datasets/multi_promoters/H_sapiens_Human_promoters/H_sapiens_Human_promoters_test.fna"},
 }
@@ -182,10 +182,6 @@ def compute_metrics(eval_pred):
 def make_training_args_no_ckpt(num_epochs, metric_for_best="f1"):
     return TrainingArguments(
         learning_rate=LR,
-        weight_decay=WEIGHT_DECAY,
-        warmup_ratio=WARMUP_RATIO,
-        max_grad_norm=MAX_GRAD_NORM,
-        adam_epsilon=ADAM_EPSILON,
         per_device_train_batch_size=PER_DEVICE_TRAIN_BS,
         per_device_eval_batch_size=PER_DEVICE_EVAL_BS,
         num_train_epochs=num_epochs,
@@ -196,10 +192,6 @@ def make_training_args_no_ckpt(num_epochs, metric_for_best="f1"):
         load_best_model_at_end=False,
         greater_is_better=True,
         metric_for_best_model="eval_f1",
-        fp16=False,
-        bf16=False,
-        report_to="none",
-        remove_unused_columns=True,
     )
 
 def freeze_backbone_only_train_head(model, reset_head=True):
@@ -233,7 +225,7 @@ class GumbelSigmoid(nn.Module):
     def forward(self, logits):
         # Gumbel noise
         noise = torch.rand_like(logits)
-        noise = torch.log(noise + 1e-8) - torch.log(1 - noise + 1e-8)
+        noise = torch.log(noise + NOISE) - torch.log(1 - noise + NOISE)
 
         return torch.sigmoid((logits + noise) / self.tau)
 
@@ -387,9 +379,8 @@ def gate_regularization_loss(model):
     l2 = torch.abs(gates.sum(dim=1) - target_k).mean()
 
     # 3. entropy
-    eps = 1e-8
-    entropy = -(gates * torch.log(gates + eps) +
-                (1 - gates) * torch.log(1 - gates + eps)).mean()
+    entropy = -(gates * torch.log(gates + EPS) +
+                (1 - gates) * torch.log(1 - gates + EPS)).mean()
 
     return 0.05 * l1 + 0.1 * l2 + 0.01 * entropy
 
