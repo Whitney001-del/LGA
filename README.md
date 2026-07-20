@@ -27,10 +27,6 @@ The experiments were conducted with the following environment:
 - Transformers 4.57.3
 - Datasets 2.18.0
 - Biopython 1.86
-- Accelerate 1.12.0
-- Peft 0.18.0
-- Tokenizers 0.22.1
-- Flash_attn 2.8.3
 - NumPy
 - Scikit-learn
 
