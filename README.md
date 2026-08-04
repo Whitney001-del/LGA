@@ -84,14 +84,17 @@ datasets/
 Each FASTA file contains DNA sequences with labels encoded in the sequence header.
 
 Example:
+
+```fasta
 >sequence_id|label
 ACGTACGTACGTACGTACGT...
+```
 
 where:
 
-sequence_id: unique identifier of each sequence
-label=1: promoter sequence
-label=0: non-promoter sequence
+- `sequence_id` denotes the unique identifier of each sequence.
+- `label=1` indicates a promoter sequence.
+- `label=0` indicates a non-promoter sequence.
 
 ---
 
