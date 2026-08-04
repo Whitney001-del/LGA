@@ -17,7 +17,7 @@ This repository contains the implementation of **Layer-Gated Adapter (LGA)**, a 
 
 ---
 
-## Environment
+## Installation
 
 The experiments were conducted with the following environment:
 
@@ -30,7 +30,16 @@ The experiments were conducted with the following environment:
 - NumPy
 - Scikit-learn
 
-Please ensure that these dependencies are installed before running the code.
+Install the required dependencies:
+
+```bash
+pip install torch==2.1.0
+pip install transformers==4.57.3
+pip install datasets==2.18.0
+pip install biopython
+pip install numpy
+pip install scikit-learn
+```
 
 ---
 
@@ -60,6 +69,31 @@ The statistics of the benchmark dataset are summarized below:
 Users may also prepare their own datasets following the same data format.
 
 ---
+## Dataset Format
+
+Users may prepare their own datasets following the same format.
+
+Example directory structure:
+
+```text
+datasets/
+└── human/
+    ├── train.fna
+    └── test.fna
+```
+Each FASTA file contains DNA sequences with labels encoded in the sequence header.
+
+Example:
+>sequence_id|label
+ACGTACGTACGTACGTACGT...
+
+where:
+
+sequence_id: unique identifier of each sequence
+label=1: promoter sequence
+label=0: non-promoter sequence
+
+---
 
 ## Pre-trained Nucleotide Transformer
 
@@ -84,3 +118,24 @@ python run.py
 ```
 
 ---
+
+## Evaluation Output
+
+After evaluation, the script will print the performance metrics on the test
+dataset.
+
+Example output:
+
+```text
+[GATE all] {
+    'eval_loss': 0.215,
+    'eval_accuracy': 0.912,
+    'eval_precision': 0.918,
+    'eval_recall': 0.906,
+    'eval_f1': 0.912,
+    'eval_runtime': 35.21
+}
+```
+
+---
+
